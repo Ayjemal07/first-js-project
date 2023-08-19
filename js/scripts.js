@@ -5,36 +5,7 @@ pokemonList=[
 {name:"Parasect",height:1.4,types:["grass","bug"]}
 ]
 
-// for (let i=0;i < pokemonList.length; i++)
-// {
-//     text=pokemonList[i].name +" (height: "+ pokemonList[i].height+")."
-//     if (pokemonList[i].height<1){
-//       document.write(text+" It's a small pokemon "+"<br>");
-//     }
-//     else if (pokemonList[i].height > 1 && pokemonList[i].height < 1.5){
-//       document.write(text+" It's an average size pokemon "+"<br>");
-//     }
-//     else{
-//       document.write(text+" It's a big pokemon "+"<br>");
-//     }
-// }
-
-//Using a forEach() function instead of the for loop to iterate over 
-// pokemonList array in order to print the details of each one.
-
-
-// globalPokemonList.forEach(function (Pokemons){
-//   text=Pokemons.name +" (height: "+ Pokemons.height+")."
-//   if (Pokemons.height<1){
-//     document.write(text+" It's a small pokemon "+"<br>");
-//   }
-//   else if (Pokemons.height > 1 && Pokemons.height < 1.5){
-//     document.write(text+" It's an average size pokemon "+"<br>");
-//   }
-//   else{
-//     document.write(text+" It's a big pokemon "+"<br>");
-//   }
-// });
+let modalContainer = document.querySelector('#modal-container');
 
 let pokemonRepository = (function () {
   let pokemonList = [];
@@ -55,8 +26,56 @@ let pokemonRepository = (function () {
     return pokemonList;
   }
 
+  function showModal(pokemon) {
+    modalContainer.innerHTML = '';
+    let modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    let closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'X';
+    closeButtonElement.addEventListener('click', hideModal);
+
+    let titleElement = document.createElement('h1');
+    titleElement.innerText = pokemon.name;
+
+    let hightElement = document.createElement('h2');
+    hightElement.innerText ="height: " + pokemon.height;
+
+    let imageElement=document.createElement('img');
+    imageElement.src=pokemon.imageUrl;
+
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(titleElement);
+    modal.appendChild(hightElement);
+    modal.appendChild(imageElement);
+    modalContainer.appendChild(modal);
+    
+    modalContainer.classList.add('is-visible');
+  }
+
+  function hideModal() {
+    modalContainer.classList.remove('is-visible');
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+      hideModal();  
+    }
+  });
+  
+  modalContainer.addEventListener('click', (e) => {
+    // Since this is also triggered when clicking INSIDE the modal
+    // We only want to close if the user clicks directly on the overlay
+    let target = e.target;
+    if (target === modalContainer) {
+      hideModal();
+    }
+  });
+
   function showDetails(pokemon){
     loadDetails(pokemon).then(function () {
+      showModal(pokemon);
       console.log(pokemon);
     });
   }
